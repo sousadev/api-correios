@@ -9,13 +9,16 @@ const routes = express.Router();
 //JWT Auth
 const jwt = require('jsonwebtoken');
 const { validateUser, generateToken } = require('./helpers/jwtHelper');
+const login = require('./modules/login/login');
+const signup = require('./modules/login/signup');
 
 // Indicate version
 
-const version = 'v1';
-
-routes.get(`/${version}/`, validateUser, async (req, res) => {
+routes.get(`/`, validateUser, async (req, res) => {
   await res.status(200).json({ message: 'started!' });
 });
+
+routes.post(`/signup`, signup);
+routes.post(`/login`, login);
 
 module.exports = routes;

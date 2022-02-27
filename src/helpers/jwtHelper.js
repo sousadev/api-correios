@@ -6,6 +6,7 @@ const validateUser = async (req, res, next) => {
   }
 
   const authHeader = await req.headers['authorization'];
+
   const receivedToken = await authHeader.split(' ');
   const token = receivedToken[1];
 
@@ -13,22 +14,18 @@ const validateUser = async (req, res, next) => {
     return res.status(401).json({ auth: false, message: 'No token received.' });
   }
 
-  if (receivedToken[0] === process.env.BEARER_WORD) {
-    jwt.verify(token, process.env.SECRET_KEY, async function (err, decoded) {
-      if (err) {
-        return await res
-          .status(500)
-          .json({ auth: false, message: 'Failed to authenticate token.' });
-      }
+  jwt.verify(token, process.env.SECRET_KEY, async function (err, decoded) {
+    if (err) {
+      return await res
+        .status(500)
+        .json({ auth: false, message: 'Failed to authenticate token.' });
+    }
 
-      req.idUser = await decoded.idUser;
-      req.username = await decoded.username;
-      req.userType = await decoded.userType;
-      await next();
-    });
-  } else {
-    await res.status(401).json({ message: 'Invalid Token!' });
-  }
+    req.idUser = await decoded.idUser;
+    req.username = await decoded.username;
+    req.userType = await decoded.userType;
+    await next();
+  });
 };
 
 const generateToken = async (idUser, username, userType) => {

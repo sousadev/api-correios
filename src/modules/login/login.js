@@ -3,13 +3,13 @@ const connection = require('../../services/mongoDB/connection');
 const jwt = require('jsonwebtoken');
 
 const User = require('../../database/MongoDB/Models/User.Model');
-const generateToken = require('../../helpers/generateTokenHelper');
+const { generateToken } = require('../../helpers/jwtHelper');
 
 const login = async (req, res) => {
   const data = await req.body;
 
-  await User.findOne({ username: data.username })
-    .where({ status: 'active' })
+  await User.findOne({ email: data.email })
+
     .select('+password')
     .exec(async (err, response) => {
       const bytes = await CryptoJS.AES.decrypt(
@@ -21,7 +21,7 @@ const login = async (req, res) => {
         const idUser = await response._id;
         const token = await generateToken(
           idUser,
-          data.username,
+          data.email,
           await response.userType
         );
 

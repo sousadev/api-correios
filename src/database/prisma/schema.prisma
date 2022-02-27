@@ -1,11 +1,50 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String
+  password  String
+  userType  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  Address   Address[]
+  packages  Package[]
+}
+
+model Package {
+  id           Int       @id @default(autoincrement())
+  nickname     String?
+  trackingCode String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime?
+  userId       Int?
+  user         User?     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Package_userId_fkey")
+}
+
+model Address {
+  id          Int       @id @default(autoincrement())
+  nickname    String?
+  logradouro  String
+  addNumber   String
+  district    String
+  complemento String
+  city        String
+  uf          String
+  zipCode     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Address_userId_fkey")
 }
