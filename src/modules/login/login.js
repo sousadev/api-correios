@@ -7,7 +7,7 @@ const { generateToken } = require('../../helpers/jwtHelper');
 
 const login = async (req, res) => {
   const data = await req.body;
-
+  console.log(data);
   await User.findOne({ email: data.email })
 
     .select('+password')
@@ -29,6 +29,8 @@ const login = async (req, res) => {
           id: idUser,
           auth: true,
           token: token,
+          name: response.name,
+          email: response.email,
         });
       } else {
         await res
