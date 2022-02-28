@@ -6,8 +6,9 @@ const User = require('../../database/MongoDB/Models/User.Model');
 const { generateToken } = require('../../helpers/jwtHelper');
 
 const login = async (req, res) => {
+  console.log('chegou na api');
   const data = await req.body;
-  console.log('Dados chegando na api' + data);
+  console.log('Dados chegando na api' + data.email + ' ' + data.password);
   await User.findOne({ email: data.email })
 
     .select('+password')
