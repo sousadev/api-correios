@@ -14,7 +14,7 @@ const login = async (req, res) => {
     .exec(async (err, response) => {
       console.log(response);
       const bytes = await CryptoJS.AES.decrypt(
-        response.password,
+        await response.password,
         process.env.SECRET_PASS_VALIDATION
       );
       const decryptedPass = await bytes.toString(CryptoJS.enc.Utf8);
