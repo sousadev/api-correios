@@ -7,11 +7,12 @@ const { generateToken } = require('../../helpers/jwtHelper');
 
 const login = async (req, res) => {
   const data = await req.body;
-  console.log(data);
+  console.log('Dados chegando na api' + data);
   await User.findOne({ email: data.email })
 
     .select('+password')
     .exec(async (err, response) => {
+      console.log(response);
       const bytes = await CryptoJS.AES.decrypt(
         response.password,
         process.env.SECRET_PASS_VALIDATION
