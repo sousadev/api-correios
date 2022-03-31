@@ -24,14 +24,19 @@ const validateUser = async (req, res, next) => {
     req.idUser = await decoded.idUser;
     req.username = await decoded.username;
     req.userType = await decoded.userType;
+    req.idNumber = await decoded.idNumber;
     await next();
   });
 };
 
-const generateToken = async (idUser, username, userType) => {
-  return jwt.sign({ idUser, username, userType }, process.env.SECRET_KEY, {
-    expiresIn: 86400, // expires in 24hs
-  });
+const generateToken = async (idUser, username, userType, idNumber) => {
+  return jwt.sign(
+    { idUser, username, userType, idNumber },
+    process.env.SECRET_KEY,
+    {
+      expiresIn: 86400, // expires in 24hs
+    }
+  );
 };
 
 module.exports = { validateUser, generateToken };

@@ -2,6 +2,9 @@ const CryptoJS = require('crypto-js');
 const connection = require('../../services/mongoDB/connection');
 const jwt = require('jsonwebtoken');
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const User = require('../../database/MongoDB/Models/User.Model');
 const { generateToken } = require('../../helpers/jwtHelper');
 
@@ -13,6 +16,12 @@ const login = async (req, res) => {
 
     .select('+password')
     .exec(async (err, response) => {
+      const db = await prisma.User.findMany({
+        where: {
+          email: data.email,
+        },
+      });
+      console.log(db);
       console.log(response);
       const bytes = await CryptoJS.AES.decrypt(
         await response.password,
@@ -24,11 +33,13 @@ const login = async (req, res) => {
         const token = await generateToken(
           idUser,
           data.email,
-          await response.userType
+          await response.userType,
+          await db[0].id
         );
 
         return res.json({
           id: idUser,
+          idNumber: await db[0].id,
           auth: true,
           token: token,
           name: response.name,
